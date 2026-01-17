@@ -1,7 +1,9 @@
 = noctalia-plugin-globalmenu
 
+Requires this patch to noctalia-shell, idk if I can make it prettier: https://github.com/CertainLach/noctalia-shell/commit/2ca9881536ce0fbef07c16919c4be1b615bc43ce
+
 == LLM disclosure
 
-I'm not good with QML, and LLM was used to implement things as "click outside to close" (click catcher stuff) and "after opening the menu, you can hover to switch between the menus". Other than that, the plugin is written by me.
+I'm not good with QML, and LLM was used to implement things as "click outside to close" (click catcher stuff), "after opening the menu, you can hover to switch between the menus", and some of the layouting fixes because it looked ugly before. Other than that, the plugin is written by me.
 
 It isn't any sloppier if I did that myself.
