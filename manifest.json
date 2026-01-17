@@ -1,0 +1,21 @@
+{
+  "id": "global-menu",
+  "name": "Global Menu",
+  "version": "1.0.0",
+  "minNoctaliaVersion": "3.6.0",
+  "author": "Yaroslav Bolyukin <iam@lach.pw>",
+  "license": "MIT",
+  "description": "Global menus using the Canonical appmenu registrar dbus interface",
+  "tags": ["Bar", "Window", "Indicator"],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": []
+  },
+  "metadata": {
+    "defaultSettings": {
+    }
+  }
+}

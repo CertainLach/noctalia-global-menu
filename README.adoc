@@ -1,0 +1,7 @@
+= noctalia-plugin-globalmenu
+
+== LLM disclosure
+
+I'm not good with QML, and LLM was used to implement things as "click outside to close" (click catcher stuff) and "after opening the menu, you can hover to switch between the menus". Other than that, the plugin is written by me.
+
+It isn't any sloppier if I did that myself.
