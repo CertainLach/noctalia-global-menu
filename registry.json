@@ -1,1 +1,15 @@
-{}
+{
+  "version": 1,
+  "plugins": [
+    {
+      "id": "global-menu",
+      "name": "Global Menu",
+      "version": "1.0.1",
+      "author": "Yaroslav Bolyukin <iam@lach.pw>",
+      "description": "Global menus using the Canonical appmenu registrar dbus interface",
+      "minNoctaliaVersion": "3.6.0",
+      "license": "MIT",
+      "lastUpdated": "2026-01-18T23:19:01+01:00"
+    }
+  ]
+}
