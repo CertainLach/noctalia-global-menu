@@ -11,7 +11,7 @@ import qs.Services.Compositor
 import qs.Services.UI
 import qs.Widgets
 
-Rectangle {
+Item {
   id: root
 
   property var pluginApi: null
@@ -99,12 +99,12 @@ Rectangle {
 
   readonly property bool hasMenuItems: menuOpener.children && menuOpener.children.values.length > 0
 
-  implicitWidth: isVertical ? Style.capsuleHeight : Math.round(menuLayout.implicitWidth + Style.marginXS * 2)
-  implicitHeight: isVertical ? Math.round(menuLayout.implicitHeight + Style.marginXS * 2) : Style.capsuleHeight
+  readonly property real contentWidth: isVertical ? Style.capsuleHeight : Math.round(menuLayout.implicitWidth + Style.marginXS * 2)
+  readonly property real contentHeight: isVertical ? Math.round(menuLayout.implicitHeight + Style.marginXS * 2) : Style.capsuleHeight
 
-  Layout.alignment: Qt.AlignVCenter
-  radius: Style.radiusM
-  color: Style.capsuleColor
+  implicitWidth: contentWidth
+  implicitHeight: contentHeight
+
   visible: hasMenuItems
 
   Connections {
@@ -198,91 +198,102 @@ Rectangle {
     windowMenuHandle.setAddress("", "");
   }
 
-  RowLayout {
-    id: menuLayout
-    anchors.fill: parent
-    anchors.margins: Style.marginXS
-    spacing: 0
+  Rectangle {
+    id: capsule
+    width: root.contentWidth
+    height: root.contentHeight
+    anchors.centerIn: parent
+    radius: Style.radiusM
+    color: Style.capsuleColor
+    border.color: Style.capsuleBorderColor
+    border.width: Style.capsuleBorderWidth
 
-    Repeater {
-      model: menuOpener.children ? [...menuOpener.children.values] : []
+    RowLayout {
+      id: menuLayout
+      anchors.fill: parent
+      anchors.margins: Style.marginXS
+      spacing: 0
 
-      delegate: Rectangle {
-        id: menuButton
-        required property var modelData
-        property var subMenu: null
+      Repeater {
+        model: menuOpener.children ? [...menuOpener.children.values] : []
 
-        Connections {
-          target: root
-          function onCurrentOpenSubmenuChanged() {
-            if (root.currentOpenSubmenu !== subMenu && subMenu) {
-              subMenu = null;
-            }
-          }
-        }
+        delegate: Rectangle {
+          id: menuButton
+          required property var modelData
+          property var subMenu: null
 
-        Layout.preferredHeight: parent.height
-        Layout.preferredWidth: buttonText.implicitWidth + Style.marginM * 2
-        color: buttonMouseArea.containsMouse || subMenu?.visible ? Color.mHover : "transparent"
-        radius: Style.radiusS
-
-        NText {
-          id: buttonText
-          anchors.centerIn: parent
-          text: modelData?.text ?? ""
-          color: buttonMouseArea.containsMouse || subMenu?.visible ? Color.mOnHover : Color.mOnSurface
-          pointSize: Style.fontSizeS
-        }
-
-        MouseArea {
-          id: buttonMouseArea
-          anchors.fill: parent
-          hoverEnabled: true
-
-          function openSubmenu() {
-            var newSubmenu = trayMenuComponent.createObject(root, {
-              "menu": modelData,
-              "isSubMenu": true,
-              "screen": root.screen
-            });
-
-            if (newSubmenu) {
-              if (root.currentOpenSubmenu && root.currentOpenSubmenu !== subMenu) {
-                var oldMenu = root.currentOpenSubmenu;
-                oldMenu.hideMenu();
-                oldMenu.destroy();
-                root.currentOpenSubmenu = null;
+          Connections {
+            target: root
+            function onCurrentOpenSubmenuChanged() {
+              if (root.currentOpenSubmenu !== subMenu && subMenu) {
+                subMenu = null;
               }
-
-              subMenu = newSubmenu;
-              root.currentOpenSubmenu = newSubmenu;
-              newSubmenu.showAt(menuButton, 0, root.isVertical ? 0 : Style.capsuleHeight);
             }
           }
 
-          onEntered: {
-            if (root.currentOpenSubmenu && !subMenu) {
-              openSubmenu();
+          Layout.preferredHeight: parent.height
+          Layout.preferredWidth: buttonText.implicitWidth + Style.marginM * 2
+          color: buttonMouseArea.containsMouse || subMenu?.visible ? Color.mHover : "transparent"
+          radius: Style.radiusS
+
+          NText {
+            id: buttonText
+            anchors.centerIn: parent
+            text: modelData?.text ?? ""
+            color: buttonMouseArea.containsMouse || subMenu?.visible ? Color.mOnHover : Color.mOnSurface
+            pointSize: Style.fontSizeS
+          }
+
+          MouseArea {
+            id: buttonMouseArea
+            anchors.fill: parent
+            hoverEnabled: true
+
+            function openSubmenu() {
+              var newSubmenu = trayMenuComponent.createObject(root, {
+                "menu": modelData,
+                "isSubMenu": true,
+                "screen": root.screen
+              });
+
+              if (newSubmenu) {
+                if (root.currentOpenSubmenu && root.currentOpenSubmenu !== subMenu) {
+                  var oldMenu = root.currentOpenSubmenu;
+                  oldMenu.hideMenu();
+                  oldMenu.destroy();
+                  root.currentOpenSubmenu = null;
+                }
+
+                subMenu = newSubmenu;
+                root.currentOpenSubmenu = newSubmenu;
+                newSubmenu.showAt(menuButton, 0, root.isVertical ? 0 : Style.capsuleHeight);
+              }
+            }
+
+            onEntered: {
+              if (root.currentOpenSubmenu && !subMenu) {
+                openSubmenu();
+              }
+            }
+
+            onClicked: {
+              if (subMenu) {
+                subMenu.hideMenu();
+                subMenu.destroy();
+                subMenu = null;
+                root.currentOpenSubmenu = null;
+              } else {
+                openSubmenu();
+              }
             }
           }
 
-          onClicked: {
+          Component.onDestruction: {
             if (subMenu) {
               subMenu.hideMenu();
               subMenu.destroy();
               subMenu = null;
-              root.currentOpenSubmenu = null;
-            } else {
-              openSubmenu();
             }
-          }
-        }
-
-        Component.onDestruction: {
-          if (subMenu) {
-            subMenu.hideMenu();
-            subMenu.destroy();
-            subMenu = null;
           }
         }
       }
