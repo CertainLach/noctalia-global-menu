@@ -1,7 +1,7 @@
 {
   "id": "global-menu",
   "name": "Global Menu",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "minNoctaliaVersion": "3.6.0",
   "author": "Yaroslav Bolyukin <iam@lach.pw>",
   "license": "MIT",
